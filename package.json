@@ -7,6 +7,7 @@
     "dev": "vite --host",
     "tunnel": "ngrok http 5173 --url=https://roulette-semicolon-battery.ngrok-free.dev",
     "build": "vite build",
+    "build:github": "vite build",
     "preview": "vite preview",
     "extract": "node scripts/extract-phase1.mjs",
     "migrate:app": "node scripts/phase2-migrate-app.mjs"
