@@ -1,0 +1,614 @@
+<div class="app">
+<!-- ===================== ÉCRAN CHARGEMENT ===================== -->
+<div class="screen active" id="screen-loading">
+  <div class="login-screen">
+    <div class="login-box" style="text-align:center;">
+      <img src="logo.png" class="login-logo" alt="Logo">
+      <h2>Gestion de Site</h2>
+      <div class="loader"></div>
+      <p class="subtitle">Chargement...</p>
+    </div>
+  </div>
+</div>
+<!-- ===================== ÉCRAN LOGIN ===================== -->
+<div class="screen" id="screen-login">
+  <div class="login-screen">
+    <div class="login-box">
+
+      <img src="logo.png" class="login-logo" alt="Logo">
+
+      <h2>Gestion de Site</h2>
+      <p class="subtitle">Connectez-vous avec votre compte Microsoft</p>
+
+      <button class="btn-ms" onclick="doLogin()">
+        <svg class="ms-logo" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1"  y="1"  width="10" height="10" fill="#F25022"/>
+          <rect x="12" y="1"  width="10" height="10" fill="#7FBA00"/>
+          <rect x="1"  y="12" width="10" height="10" fill="#00A4EF"/>
+          <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+        </svg>
+        <span>Se connecter avec Microsoft</span>
+      </button>
+
+      <p id="loginStatus" class="login-status"></p>
+
+      <p class="login-footer">© SE3M — Gestion de Site</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ÉCRAN MENU ==================== -->
+<div class="screen" id="screen-menu">
+  <div class="header">
+    <div style="width:40px;"></div>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo">
+      <h1>Menu Principal</h1>
+    </div>
+    <button class="header-btn" onclick="doLogout()">🚪</button>
+  </div>
+  <div class="content">
+    <p style="margin-bottom: 14px; color: #777; font-size: 13px;">Bienvenue, <strong id="welcomeUser"></strong></p>
+    <div class="menu-grid">
+      <div class="menu-card" onclick="goToNewEvent()">
+        <div class="icon">📝</div>
+        <div class="label">Nouveau</div>
+        <div class="desc">Créer un événement</div>
+      </div>
+      <div class="menu-card" onclick="goTo('screen-history')">
+        <div class="icon">📋</div>
+        <div class="label">Historique</div>
+        <div class="desc">Voir les entrées</div>
+      </div>
+      <div class="menu-card" onclick="goTo('screen-planning')">
+        <div class="icon">📅</div>
+        <div class="label">Planning</div>
+        <div class="desc">Gestion planning</div>
+      </div>
+      <div class="menu-card" onclick="goTo('screen-planning-sst')">
+        <div class="icon">🗓️</div>
+        <div class="label">Planning SST</div>
+        <div class="desc">Sous-traitants</div>
+    </div>
+      <!-- Widget Planning -->
+    </div>
+    <div id="today-widget" style="margin:16px 0;background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,0.08);">
+        <div style="font-weight:700;font-size:15px;margin-bottom:10px;color:#2c3e50;">
+        📅 Planning du jour
+        <span id="today-date" style="font-weight:400;color:#999;font-size:12px;"></span>
+    </div>
+  <div id="today-list"></div>
+</div>
+ <!-- Widget Sous-Traitance -->
+<div id="sst-widget" style="margin:16px 0;background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,0.08);">
+  <div style="font-weight:700;font-size:15px;margin-bottom:10px;color:#2c3e50;">
+    🔧 Sous-traitants cette semaine
+    <span id="sst-week-label" style="font-weight:400;color:#999;font-size:12px;"></span>
+  </div>
+  <div id="sst-list"></div>
+</div>
+   
+<div class="menu-card" id="menu-admin" onclick="goTo('screen-admin')" style="display:none;">
+        <div class="icon">⚙️</div>
+        <div class="label">Admin</div>
+        <div class="desc">Paramètres</div>
+      </div>
+  </div>
+</div>
+
+<!-- ==================== ÉCRAN HOME (NOUVEAU) ==================== -->
+<div class="screen" id="screen-home">
+  <div class="header">
+  <button class="header-btn-left" onclick="goTo('screen-menu')">←</button>
+  <div class="header-center">
+    <img src="logo.png" class="header-logo" onclick="goTo('screen-menu')">
+    <h1>Nouvel Événement</h1>
+  </div>
+</div>
+
+  <div class="content">
+    <div class="form-group">
+      <label><span class="req">*</span>Client / Site</label>
+      <select id="client"><option value="">-- Choisir --</option></select>
+    </div>
+    <div class="form-group">
+      <label>Localisation</label>
+      <input type="text" id="localisation" placeholder="Bâtiment, zone...">
+    </div>
+    <div class="form-group">
+      <label><span class="req">*</span>Type d'événement</label>
+      <div class="type-grid">
+        <div class="type-card" onclick="selectType(this,'Fait marquant')">
+          <div class="icon">⚡</div><div class="label">Fait marquant</div>
+        </div>
+        <div class="type-card" onclick="selectType(this,'Information')">
+          <div class="icon">ℹ️</div><div class="label">Information</div>
+        </div>
+        <div class="type-card" onclick="selectType(this,'Astreinte')">
+          <div class="icon">🔔</div><div class="label">Astreinte</div>
+        </div>
+        <div class="type-card" onclick="selectType(this,'Sous-traitant')">
+          <div class="icon">🔧</div><div class="label">Sous-traitant</div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label><span class="req">*</span>Date début</label>
+        <input type="date" id="dateDebut">
+      </div>
+      <div class="form-group">
+        <label><span class="req">*</span>Date fin</label>
+        <input type="date" id="dateFin">
+      </div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <button class="btn btn-secondary" onclick="goTo('screen-menu')">⬅ Retour</button>
+    <button class="btn btn-primary" onclick="goToForm()">Suivant ➜</button>
+  </div>
+</div>
+
+<!-- ==================== ÉCRAN FAIT MARQUANT ==================== -->
+<div class="screen" id="screen-fait">
+  <div class="header">
+    <button class="header-btn-left" onclick="goTo('screen-menu')">←</button>
+    <div style="width:40px;"></div>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo" onclick="goTo('screen-menu')" style="cursor:pointer;">
+      <h1>Fait Marquant</h1>
+    </div>
+    <button class="header-btn" id="btn-admin" onclick="goTo('screen-admin')" style="display:none;">⚙️</button>
+  </div>
+  <div class="content">
+    <div class="form-group">
+      <label><span class="req">*</span>Opérations réalisées</label>
+      <textarea id="fait-operations" placeholder="Décrire les opérations..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Actions à prévoir</label>
+      <textarea id="fait-actions" placeholder="Actions à prévoir..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Commentaire</label>
+      <textarea id="fait-commentaire" placeholder="Commentaire libre..."></textarea>
+    </div>
+  <div class="form-group">
+      <div class="switch-row">
+        <span>Impact énergétique</span>
+        <label class="switch">
+          <input type="checkbox" id="fm-impact">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>N° CRI</label>
+      <input type="text" id="fm-cri" placeholder="Numéro CRI...">
+    </div>
+  <div class="bottom-bar">
+    <button class="btn btn-secondary" onclick="goTo('screen-home')">⬅ Retour</button>
+    <button class="btn btn-primary" onclick="submitEvent()">✅ Enregistrer</button>
+  </div>
+</div>
+</div>
+
+<!-- ==================== ÉCRAN INFORMATION ==================== -->
+<div class="screen" id="screen-info">
+  <div class="header">
+    <button class="header-btn-left" onclick="goTo('screen-menu')">←</button>
+    <div style="width:40px;"></div>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo" onclick="goTo('screen-menu')" style="cursor:pointer;">
+      <h1>Information</h1>
+    </div>
+    <button class="header-btn" id="btn-admin" onclick="goTo('screen-admin')" style="display:none;">⚙️</button>
+  </div>
+  <div class="content">
+    <div class="form-group">
+      <label><span class="req">*</span>Opérations réalisées</label>
+      <textarea id="info-operations" placeholder="Décrire les opérations..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Actions à prévoir</label>
+      <textarea id="info-actions" placeholder="Actions à prévoir..."></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label>Commentaire</label>
+      <textarea id="info-commentaire" placeholder="Commentaire libre..."></textarea>
+    </div>
+
+    </div>
+
+  <div class="bottom-bar">
+    <button class="btn btn-secondary" onclick="goTo('screen-home')">⬅ Retour</button>
+    <button class="btn btn-primary" onclick="submitEvent()">✅ Enregistrer</button>
+  </div>
+</div>
+
+<!-- ==================== ÉCRAN ASTREINTE ==================== -->
+<div class="screen" id="screen-astreinte">
+  <div class="header">
+    <button class="header-btn-left" onclick="goTo('screen-menu')">←</button>
+    <div style="width:40px;"></div>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo" onclick="goTo('screen-menu')" style="cursor:pointer;">
+      <h1>Astreinte</h1>
+    </div>
+    <button class="header-btn" id="btn-admin" onclick="goTo('screen-admin')" style="display:none;">⚙️</button>
+  </div>
+  <div class="content">
+    <div class="form-group">
+      <label><span class="req">*</span>Symptôme</label>
+      <textarea id="astr-operations" placeholder="Décrire l'intervention..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Compte-rendu</label>
+      <textarea id="astr-actions" placeholder="Actions à prévoir..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Commentaire</label>
+      <textarea id="astr-commentaire" placeholder="Commentaire libre..."></textarea>
+    </div>
+    <div class="form-group">
+      <div class="switch-row">
+        <span>Impact énergétique</span>
+        <label class="switch">
+          <input type="checkbox" id="astr-impact">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Intervenant</label>
+      <input type="text" id="astr-intervenant" placeholder="Nom de l'intervenant...">
+    </div>
+    <div class="form-group">
+      <label>Lot technique</label>
+      <input type="text" id="astr-lot-technique" placeholder="Lot technique...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Heure d'appel</label>
+        <input type="time" id="astr-heure-appel">
+      </div>
+      <div class="form-group">
+        <label>Heure d'arrivée</label>
+        <input type="time" id="astr-heure-arrivee">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Heure de départ</label>
+      <input type="time" id="astr-heure-depart">
+    </div>
+  </div>
+<div class="bottom-bar">
+    <button class="btn btn-secondary" onclick="goTo('screen-home')">⬅ Retour</button>
+    <button class="btn btn-primary" onclick="submitEvent()">✅ Enregistrer</button>
+  </div>
+</div>
+
+<!-- ==================== ÉCRAN SOUS-TRAITANT ==================== -->
+<div class="screen" id="screen-soustraitant">
+  <div class="header">
+    <button class="header-btn-left" onclick="goTo('screen-menu')">←</button>
+    <div style="width:40px;"></div>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo" onclick="goTo('screen-menu')" style="cursor:pointer;">
+      <h1>Sous-traitant</h1>
+    </div>
+    <button class="header-btn" id="btn-admin" onclick="goTo('screen-admin')" style="display:none;">⚙️</button>
+  </div>
+  <div class="content">
+    <div class="form-group">
+      <label><span class="req">*</span>Nature des travaux</label>
+      <textarea id="st-operations" placeholder="Décrire les opérations..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Descriptif des actions menées</label>
+      <textarea id="st-actions" placeholder="Actions à prévoir..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Commentaire</label>
+      <textarea id="st-commentaire" placeholder="Commentaire libre..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Société</label>
+      <input type="text" id="st-societe" placeholder="Nom de la société...">
+    </div>
+    <div class="form-group">
+      <label>Lot</label>
+      <input type="text" id="st-lot" placeholder="Lot...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Heure d'arrivée</label>
+        <input type="time" id="st-heure-arrivee">
+      </div>
+      <div class="form-group">
+        <label>Heure de départ</label>
+        <input type="time" id="st-heure-depart">
+      </div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <button class="btn btn-secondary" onclick="goTo('screen-home')">⬅ Retour</button>
+    <button class="btn btn-primary" onclick="submitEvent()">✅ Enregistrer</button>
+  </div>
+</div>
+
+<!-- ==================== ÉCRAN HISTORIQUE ==================== -->
+<div class="screen" id="screen-history">
+  <div class="header">
+    <button class="header-btn-left" onclick="goTo('screen-menu')">←</button>
+    <div style="width:40px;"></div>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo" onclick="goTo('screen-menu')" style="cursor:pointer;">
+      <h1>Historique</h1>
+    </div>
+    <button class="header-btn" onclick="exportExcel()">📊</button>
+  </div>
+  <div class="content">
+    <div class="history-filters">
+      <select id="filterClient" onchange="renderHistory()">
+        <option value="">Tous les clients</option>
+      </select>
+      <input type="date" id="filterFrom" onchange="renderHistory()">
+      <input type="date" id="filterTo" onchange="renderHistory()">
+      <button class="filter-reset" onclick="resetFilters()">✖ Reset</button>
+    </div>
+    <div class="history-container">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date Début</th><th>Date Fin</th><th>Client</th><th>Localisation</th><th>Type</th>
+            <th>Opérations</th><th>Actions</th><th>Commentaire</th><th>Impact</th><th>CRI</th>
+            <th>Intervenant</th><th>Lot Tech.</th><th>H.Appel</th><th>H.Arrivée</th><th>H.Départ</th>
+            <th>Société</th><th>Lot ST</th><th>⚙️</th>
+          </tr>
+        </thead>
+        <tbody id="history-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+<div class="bottom-bar">
+    <button class="btn btn-secondary" onclick="goTo('screen-menu')">⬅ Retour</button>
+</div>
+</div>
+
+<!-- ==================== ÉCRAN PLANNING ==================== -->
+<div class="screen" id="screen-planning">
+  <div class="header">
+    <button class="header-btn-left" onclick="goTo('screen-menu')">←</button>
+    <div style="width:40px;"></div>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo" onclick="goTo('screen-menu')" style="cursor:pointer;">
+      <h1>Planning de Présence</h1>
+    </div>
+    <button class="header-btn" onclick="goTo('screen-menu')">🏠</button>
+  </div>
+  <div class="content">
+    <!-- Sélecteurs -->
+    <div class="planning-actions">
+      <select id="planningClientSelect" onchange="renderPlanning()"></select>
+      <button onclick="prevMonth()">◀</button>
+      <span id="planningMoisLabel" style="font-weight:700;font-size:14px;min-width:140px;text-align:center;"></span>
+      <button onclick="nextMonth()">▶</button>
+    </div>
+
+    <!-- Actions employés -->
+    <div class="planning-actions">
+      <input type="text" id="newEmpName" placeholder="Nom employé...">
+      <button onclick="addEmployee()">+ Ajouter</button>
+    </div>
+
+    <!-- Légende -->
+    <div class="planning-legend" id="planningLegend"></div>
+
+    <!-- Tableau -->
+    <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+      <table class="planning-table" id="planningTable"></table>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <button class="btn btn-secondary" onclick="goTo('screen-menu')">⬅ Retour</button>
+    <button class="btn btn-primary" onclick="exportPlanning()">📊 Exporter</button>
+  </div>
+</div>
+
+<!-- CODE PICKER MODAL -->
+<div class="code-picker-overlay" id="codePicker">
+  <div class="code-picker-box">
+    <h4 id="codePickerTitle">Choisir un code</h4>
+    <div class="code-picker-grid" id="codePickerGrid"></div>
+  </div>
+</div>
+<!-- ==================== ÉCRAN PLANNING SST ==================== -->
+<div class="screen" id="screen-planning-sst">
+  <div class="header">
+    <button class="header-btn-left" onclick="goTo('screen-menu')">←</button>
+    <div style="width:40px;"></div>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo" onclick="goTo('screen-menu')" style="cursor:pointer;">
+      <h1>Planning Sous-Traitants</h1>
+    </div>
+    <button class="header-btn" onclick="goTo('screen-menu')">🏠</button>
+  </div>
+  <div class="content">
+
+    <div class="planning-actions">
+      <select id="sstClientSelect" onchange="renderPlanningSST()" style="flex:1;"></select>
+      <button onclick="prevYearSST()">◀</button>
+      <span id="sstAnneeLabel" style="font-weight:700;font-size:14px;min-width:80px;text-align:center;"></span>
+      <button onclick="nextYearSST()">▶</button>
+    </div>
+
+    <div class="planning-actions">
+      <input type="text" id="newSSTName" placeholder="Nom sous-traitant...">
+      <button onclick="addSST()">+ Ajouter</button>
+      <button onclick="exportSSTExcel()" style="background:#1D6F42;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:700;">📥 Excel</button>
+    </div>
+
+    <div class="planning-legend">
+      <span style="background:#4CAF50;color:#fff;padding:2px 8px;border-radius:4px;margin-right:8px;">P = Prévu</span>
+      <span style="background:#2196F3;color:#fff;padding:2px 8px;border-radius:4px;margin-right:8px;">F = Fait</span>
+      <span style="background:#FFC107;color:#000;padding:2px 8px;border-radius:4px;">R = Replanifié</span>
+    </div>
+
+    <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+      <table class="planning-table" id="planningTableSST"></table>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<!-- ==================== ÉCRAN ADMIN ==================== -->
+<div class="screen" id="screen-admin">
+  <div class="header">
+    <button class="header-btn-left" onclick="goTo('screen-menu')">←</button>
+    <div style="width:40px;"></div>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo" onclick="goTo('screen-menu')" style="cursor:pointer;">
+      <h1>Administration</h1>
+    </div>
+    <div></div>
+  </div>
+
+  <div class="content">
+    <div class="admin-section">
+      <h3>👥 Utilisateurs</h3>
+      <ul class="admin-list" id="userList"></ul>
+    </div>
+    <div class="admin-section">
+      <h3>🏢 Clients / Sites</h3>
+      <ul class="admin-list" id="clientList"></ul>
+      <div class="admin-add-row">
+        <input type="text" id="newClientName" placeholder="Nom du client">
+        <button onclick="addClient()">+</button>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        <button class="btn btn-secondary" style="font-size:11px;padding:8px 12px;" onclick="document.getElementById('importFile').click()">📥 Importer CSV</button>
+        <button class="btn btn-secondary" style="font-size:11px;padding:8px 12px;" onclick="exportClients()">📤 Exporter liste</button>
+        <input type="file" id="importFile" accept=".csv,.xls,.xlsx" style="display:none" onchange="importClients(event)">
+      </div>
+        <div class="admin-section">
+  <h3>🔐 Historique des connexions</h3>
+  <button class="btn btn-primary" onclick="goTo('screen-login-history')">
+    Voir l'historique
+  </button>
+</div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn btn-secondary" onclick="goTo('screen-menu')">⬅ Retour</button>
+  </div>
+</div>
+
+<!-- ==================== ÉCRAN LOGIN HISTORY ==================== -->
+<div class="screen" id="screen-login-history">
+  <div class="header">
+    <button class="header-btn-left" onclick="goTo('screen-admin')">←</button>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo">
+      <h1>Historique Connexions</h1>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ONGLETS RÔLE -->
+    <div class="lh-tabs" id="lh-tabs">
+      <button type="button" class="lh-tab active" data-tab="users">👤 Utilisateurs</button>
+      <button type="button" class="lh-tab" data-tab="admins">⚙️ Admins</button>
+      <button type="button" class="lh-tab" data-tab="total">📊 Total</button>
+    </div>
+
+    <!-- STATS CARDS -->
+    <div id="login-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+      <div class="stat-card" style="background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <div style="font-size:28px;font-weight:700;color:#2196F3;" id="stat-total">-</div>
+        <div style="font-size:12px;color:#777;">Connexions totales</div>
+      </div>
+      <div class="stat-card" style="background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <div style="font-size:28px;font-weight:700;color:#4CAF50;" id="stat-today">-</div>
+        <div style="font-size:12px;color:#777;">Aujourd'hui</div>
+      </div>
+      <div class="stat-card" style="background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <div style="font-size:28px;font-weight:700;color:#FF9800;" id="stat-week">-</div>
+        <div style="font-size:12px;color:#777;">Cette semaine</div>
+      </div>
+      <div class="stat-card" style="background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <div style="font-size:28px;font-weight:700;color:#9C27B0;" id="stat-unique">-</div>
+        <div style="font-size:12px;color:#777;">Utilisateurs uniques</div>
+      </div>
+    </div>
+
+    <!-- GRAPHIQUES -->
+    <div class="lh-charts-grid">
+      <div class="lh-chart-wrap" style="background:#fff;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <canvas id="chart-pages"></canvas>
+      </div>
+      <div class="lh-chart-wrap" style="background:#fff;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <canvas id="chart-duration"></canvas>
+      </div>
+    </div>
+
+    <!-- TOP USERS -->
+    <div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+      <div style="font-weight:700;margin-bottom:10px;">🏆 Top utilisateurs</div>
+      <div id="stat-top-users"></div>
+    </div>
+
+    <!-- FILTRES -->
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+      <input type="date" id="lh-from" onchange="renderLoginHistory()">
+      <input type="date" id="lh-to" onchange="renderLoginHistory()">
+      <input type="text" id="lh-search" placeholder="🔍 Rechercher..." 
+             oninput="renderLoginHistory()"
+             style="flex:1;padding:8px;border:1px solid #ddd;border-radius:8px;">
+    </div>
+
+    <!-- TABLEAU -->
+    <div style="overflow-x:auto;">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Date/Heure</th>
+            <th>Durée</th>
+            <th>Rôle</th>
+            <th>Navigateur</th>
+          </tr>
+        </thead>
+        <tbody id="login-history-tbody"></tbody>
+      </table>
+    </div>
+
+  </div>
+  <div class="bottom-bar">
+    <button class="btn btn-secondary" onclick="goTo('screen-admin')">⬅ Retour</button>
+    <button class="btn btn-primary" onclick="exportLoginHistory()">📊 Exporter</button>
+  </div>
+</div>
+
+<!-- ACCESS MODAL -->
+<div class="modal-overlay" id="modal-access">
+  <div class="modal-box">
+    <h3>🔑 Accès clients — <span id="modal-access-user"></span></h3>
+    <button class="modal-btn-toggle" id="toggleAllAccessBtn" onclick="toggleAllAccess()">☑ Tout sélectionner</button>
+    <div id="modal-access-list"></div>
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="closeAccessModal()">Annuler</button>
+      <button class="modal-btn-save" onclick="saveAccess()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+</div>

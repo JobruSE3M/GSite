@@ -1,0 +1,22 @@
+{
+  "name": "gestion-de-site-spa",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "tunnel": "ngrok http 5173 --url=https://roulette-semicolon-battery.ngrok-free.dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "extract": "node scripts/extract-phase1.mjs",
+    "migrate:app": "node scripts/phase2-migrate-app.mjs"
+  },
+  "dependencies": {
+    "@azure/msal-browser": "^2.38.3",
+    "chart.js": "^4.5.1",
+    "xlsx-js-style": "^1.2.0"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}

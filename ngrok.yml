@@ -1,0 +1,7 @@
+# Config ngrok locale — authtoken dans %LocalAppData%\ngrok\ngrok.yml
+version: "3"
+endpoints:
+  - name: gestion-site-spa
+    url: https://roulette-semicolon-battery.ngrok-free.dev
+    upstream:
+      url: http://127.0.0.1:5173

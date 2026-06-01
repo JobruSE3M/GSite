@@ -1,0 +1,390 @@
+/* PLANNING TABLE */
+.planning-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  min-width: 800px;
+}
+.planning-table th,
+.planning-table td {
+  border: 1px solid #ddd;
+  padding: 4px 2px;
+  text-align: center;
+  min-width: 32px;
+  white-space: nowrap;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+th.weekend {
+  background-color: #a0b4c8 !important;
+}
+
+
+.planning-table th {
+  background: #2c3e6b;
+  color: #fff;
+  font-weight: 700;
+  font-size: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.planning-table td:first-child {
+  font-weight: 700;
+  background: #f8f8f8;
+  min-width: 100px;
+  text-align: left;
+  padding-left: 6px;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+.planning-table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+}
+.planning-table td {
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.planning-table td.selected-drag {
+  outline: 2px solid #2c3e6b;
+  border-radius: 2px;
+}
+.planning-table td.drag-source {
+  outline: 2px dashed #e67e22;
+}
+.planning-table td:hover {
+  opacity: 0.7;
+}
+.planning-table td:first-child:hover {
+  opacity: 1;
+}
+.planning-table .weekend {
+  background: #f5f5f5 !important;
+  color: #bbb !important;
+}
+
+/* PLANNING LEGEND */
+.planning-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.legend-color {
+  width: 20px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* CODE PICKER MODAL */
+.code-picker-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 400;
+  align-items: center;
+  justify-content: center;
+}
+.code-picker-overlay.active {
+  display: flex;
+}
+.code-picker-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  width: 90%;
+  max-width: 360px;
+}
+.code-picker-box h4 {
+  margin-bottom: 12px;
+  color: #2c3e6b;
+  font-size: 14px;
+}
+.code-picker-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.code-pick-btn {
+  padding: 12px 8px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  transition: all 0.15s;
+}
+.code-pick-btn:hover {
+  transform: scale(0.96);
+}
+.code-pick-clear {
+  grid-column: span 2;
+  padding: 10px;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* EMP NAME CELL */
+.emp-name-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+.emp-edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 2px;
+}
+
+/* PLANNING ACTIONS */
+.planning-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.planning-actions input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 12px;
+  min-width: 120px;
+}
+.planning-actions select {
+  flex: 1;
+  padding: 8px 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 12px;
+  min-width: 120px;
+  background: #fff;
+}
+.planning-actions button {
+  padding: 8px 14px;
+  background: #2c3e6b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* PLANNING */
+.planning-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+.planning-nav button {
+  background: #2c3e6b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.planning-nav span {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2c3e6b;
+  min-width: 160px;
+  text-align: center;
+}
+.planning-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+}
+.planning-table {
+  border-collapse: collapse;
+  min-width: 100%;
+  font-size: 11px;
+}
+.planning-table th {
+  background: #1a2a4a;
+  color: #fff;
+  padding: 5px 2px;
+  font-size: 10px;
+  text-align: center;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.planning-table th:first-child {
+  min-width: 110px;
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: #1a2a4a;
+}
+.planning-table td {
+  padding: 0;
+  border: 1px solid #e0e0e0;
+  text-align: center;
+  cursor: pointer;
+  height: 32px;
+  min-width: 32px;
+  font-weight: 700;
+  font-size: 11px;
+  transition: opacity 0.15s;
+  user-select: none;
+}
+.planning-table td:first-child {
+  padding: 4px 8px;
+  text-align: left;
+  cursor: default;
+  background: #f8f9fa;
+  font-weight: 600;
+  font-size: 11px;
+  white-space: nowrap;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  border-right: 2px solid #2c3e6b;
+}
+.planning-table td:hover { opacity: 0.7; }
+.planning-table td:first-child:hover { opacity: 1; }
+.planning-table .weekend { background: #f5f5f5 !important; color: #bbb !important; }
+
+/* PLANNING LEGEND */
+.planning-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.legend-color {
+  width: 20px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* PLANNING CODE PICKER MODAL */
+.code-picker-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 400;
+  align-items: center;
+  justify-content: center;
+}
+.code-picker-overlay.active { display: flex; }
+.code-picker-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  width: 90%;
+  max-width: 360px;
+}
+.code-picker-box h4 { margin-bottom: 12px; color: #2c3e6b; font-size: 14px; }
+.code-picker-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.code-pick-btn {
+  padding: 12px 8px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  transition: all 0.15s;
+}
+.code-pick-btn:hover { transform: scale(0.96); }
+.code-pick-clear {
+  grid-column: span 2;
+  padding: 10px;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* EMP NAME CELL */
+.emp-name-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+.emp-edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 2px;
+}
+
+/* PLANNING ACTIONS */
+.planning-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.planning-actions input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 12px;
+  min-width: 120px;
+}
+.planning-actions button {
+  padding: 8px 14px;
+  background: #2c3e6b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
