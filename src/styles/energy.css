@@ -1,0 +1,774 @@
+/* Module Énergie — admin compteurs */
+
+.meter-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.meter-toolbar select {
+  flex: 1;
+  min-width: 160px;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.meter-panel {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.meter-panel h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #2c3e50;
+}
+
+.meter-tree-group {
+  margin-bottom: 4px;
+}
+
+.meter-tree-children {
+  position: relative;
+}
+
+.meter-tree-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.meter-tree-row--parent {
+  background: #f8fafc;
+  border-radius: 8px 8px 0 0;
+}
+
+.meter-tree-row--parent .meter-tree-name {
+  font-weight: 700;
+  color: #1a2a4a;
+}
+
+/* Branche repliable — compteur général */
+.meter-general-branch {
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.meter-general-branch__summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.meter-general-branch__summary::-webkit-details-marker {
+  display: none;
+}
+
+.meter-general-branch__summary .meter-tree-row {
+  border-bottom: none;
+}
+
+.meter-tree-expand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 4px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  color: #2c3e50;
+  flex-shrink: 0;
+}
+
+.meter-tree-expand::before {
+  content: '+';
+}
+
+.meter-general-branch[open] > .meter-general-branch__summary .meter-tree-expand::before {
+  content: '−';
+}
+
+.meter-tree-meter-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  flex-shrink: 0;
+  background: center / contain no-repeat
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a2a4a'%3E%3Crect x='5' y='3' width='14' height='16' rx='2' fill='none' stroke='%231a2a4a' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='14' r='4' fill='none' stroke='%231a2a4a' stroke-width='1.5'/%3E%3Cline x1='12' y1='14' x2='12' y2='10' stroke='%231a2a4a' stroke-width='1.5'/%3E%3Cline x1='9' y1='6' x2='15' y2='6' stroke='%231a2a4a' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+
+.meter-inline-general-lbl {
+  font-size: 12px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #444;
+}
+
+/* Lignes d'arborescence — enfants liés au Général */
+.sub-meter-row {
+  position: relative;
+  padding-left: 40px;
+}
+
+.sub-meter-row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 2px;
+  height: 100%;
+  background-color: #ccc;
+}
+
+.sub-meter-row::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  width: 15px;
+  height: 2px;
+  background-color: #ccc;
+}
+
+.meter-tree-children .sub-meter-row:last-child::before {
+  height: 50%;
+}
+
+.reading-row.sub-meter-row {
+  position: relative;
+  padding-left: 40px;
+}
+
+.reading-row.sub-meter-row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 2px;
+  height: 100%;
+  background-color: #ccc;
+  z-index: 0;
+}
+
+.reading-row.sub-meter-row::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  width: 15px;
+  height: 2px;
+  background-color: #ccc;
+  z-index: 0;
+}
+
+.meter-tree-children .reading-row.sub-meter-row:last-child::before {
+  height: 50%;
+}
+
+.reading-row--parent {
+  background: #f8fafc;
+}
+
+.reading-row--parent .reading-meter-name {
+  font-weight: 700;
+  color: #1a2a4a;
+}
+
+.reading-parent-badge {
+  margin-right: 2px;
+}
+
+.reading-row.sub-meter-row .reading-name-col,
+.reading-row.sub-meter-row .reading-prev-col,
+.reading-row.sub-meter-row .reading-input-col,
+.reading-row.sub-meter-row .reading-conso-col {
+  position: relative;
+  z-index: 1;
+}
+
+.meter-tree-row--active {
+  background: #e3f2fd;
+  border-radius: 8px;
+}
+
+.meter-tree-name {
+  font-weight: 600;
+  flex: 1;
+  min-width: 120px;
+}
+
+.meter-tree-meta {
+  font-size: 12px;
+  color: #888;
+}
+
+.meter-tree-row--editing {
+  background: #fff8e1;
+  border-radius: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.meter-inline-input {
+  flex: 1;
+  min-width: 100px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.meter-inline-select {
+  min-width: 110px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 12px;
+  background: #fff;
+}
+
+.btn-icon--save {
+  color: #2e7d32;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.meter-tree-actions .btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+}
+
+.meter-empty {
+  color: #aaa;
+  font-size: 13px;
+  margin: 8px 0;
+}
+
+.meter-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .meter-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.meter-form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #555;
+}
+
+.meter-form-grid input[type='text'],
+.meter-form-grid select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.meter-form-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 12px 0;
+  font-size: 13px;
+}
+
+.meter-linked-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+  padding: 8px;
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+.meter-linked-item {
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.meter-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.meter-readings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.meter-readings-table th,
+.meter-readings-table td {
+  padding: 8px 6px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.meter-readings-table th {
+  color: #777;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.meter-import-hint {
+  font-size: 12px;
+  color: #888;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+.meter-import-progress {
+  font-size: 12px;
+  color: #2196f3;
+  margin-top: 6px;
+}
+
+/* Ronde terrain — Phase 3 */
+.reading-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 520px) {
+  .reading-toolbar {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reading-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #555;
+}
+
+.reading-field select,
+.reading-field input[type='month'] {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.reading-summary {
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 12px;
+}
+
+.reading-list {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.reading-row {
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr 1fr 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+@media (max-width: 640px) {
+  .reading-row {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'name name'
+      'prev input'
+      'conso conso';
+  }
+  .reading-name-col { grid-area: name; }
+  .reading-prev-col { grid-area: prev; }
+  .reading-input-col { grid-area: input; }
+  .reading-conso-col { grid-area: conso; }
+}
+
+.reading-row--header {
+  background: #f8f9fa;
+  font-size: 11px;
+  font-weight: 700;
+  color: #777;
+  text-transform: uppercase;
+}
+
+.reading-row--saved {
+  background: #f1f8e9;
+}
+
+.reading-meter-name {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.reading-meter-meta {
+  display: block;
+  font-size: 11px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.reading-col-label {
+  display: block;
+  font-size: 10px;
+  color: #aaa;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.reading-prev-value {
+  font-size: 14px;
+  color: #555;
+  font-variant-numeric: tabular-nums;
+}
+
+.reading-index-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.reading-index-input:focus {
+  border-color: #2196f3;
+  outline: none;
+}
+
+.reading-conso-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2196f3;
+  font-variant-numeric: tabular-nums;
+}
+
+.reading-conso--sum {
+  font-weight: 700;
+  color: #1a2a4a;
+}
+
+.reading-conso--live {
+  color: #1565c0;
+}
+
+.reading-conso--stored {
+  color: #2e7d32;
+}
+
+.reading-row--saved.reading-row--parent {
+  background: #f1f8e9;
+}
+
+.reading-conso-stored {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.3;
+  margin-top: 4px;
+  color: #666;
+}
+
+.reading-conso-stored--ok {
+  color: #2e7d32;
+}
+
+.reading-conso-stored--pending {
+  color: #e65100;
+}
+
+.reading-conso-stored--diff {
+  color: #6a1b9a;
+}
+
+.reading-conso-stored--hint {
+  color: #888;
+}
+
+.reading-bottom-bar {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.reading-bottom-bar .btn {
+  flex: 1 1 auto;
+  min-width: 120px;
+}
+
+.reading-conso--warn {
+  color: #e65100 !important;
+}
+
+/* Consommations — Phase 4 */
+.conso-coverage-card {
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.conso-coverage-title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #2c3e50;
+}
+
+.conso-coverage-meta {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.conso-coverage-bar {
+  display: flex;
+  height: 22px;
+  border-radius: 11px;
+  overflow: hidden;
+  background: #e0e0e0;
+  margin-bottom: 8px;
+}
+
+.conso-coverage-traced {
+  background: linear-gradient(90deg, #43a047, #66bb6a);
+  min-width: 2px;
+  transition: width 0.3s ease;
+}
+
+.conso-coverage-unknown {
+  background: linear-gradient(90deg, #bdbdbd, #9e9e9e);
+  min-width: 2px;
+}
+
+.conso-coverage-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.conso-stat-traced {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.conso-stat-unknown {
+  color: #757575;
+  font-weight: 600;
+}
+
+.conso-coverage-detail {
+  font-size: 12px;
+  color: #666;
+}
+
+.conso-chart-wrap {
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 4px;
+  min-height: 220px;
+}
+
+.conso-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.conso-pole-chart {
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 8px 6px;
+  border-left: 4px solid #ddd;
+  min-width: 0;
+}
+
+.conso-pole-title {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.2;
+}
+
+.conso-pole-meta {
+  margin: 0 0 6px;
+  font-size: 10px;
+  color: #666;
+  line-height: 1.3;
+}
+
+.conso-chart-canvas-wrap {
+  position: relative;
+  height: 240px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.conso-comment-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.conso-comment-input {
+  font-size: 11px;
+  padding: 6px 8px;
+  min-height: 0;
+  resize: vertical;
+}
+
+.conso-comment-save {
+  font-size: 11px;
+  padding: 4px 8px;
+  align-self: flex-start;
+}
+
+.conso-detail-table td:nth-child(3) {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Accordéons par pôle énergétique */
+.energy-accordions-wrap {
+  margin-top: 8px;
+}
+
+.energy-accordion {
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  background: #fafafa;
+  overflow: hidden;
+}
+
+.energy-accordion[open] {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.energy-accordion__summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  color: #2c3e50;
+  user-select: none;
+}
+
+.energy-accordion__summary::-webkit-details-marker {
+  display: none;
+}
+
+.energy-accordion__summary::after {
+  content: '▸';
+  margin-left: auto;
+  font-size: 12px;
+  color: #999;
+  transition: transform 0.15s ease;
+}
+
+.energy-accordion[open] > .energy-accordion__summary::after {
+  transform: rotate(90deg);
+}
+
+.energy-accordion__icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.energy-accordion__title {
+  flex: 1;
+  font-size: 14px;
+}
+
+.energy-accordion__count {
+  font-size: 12px;
+  font-weight: 500;
+  color: #888;
+  background: #eee;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.energy-accordion__body {
+  padding: 0 8px 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.energy-accordion__body .meter-tree-row:first-child,
+.energy-accordion__body .reading-row:first-child {
+  border-top: none;
+}
+
+/* Commentaires graphiques (GS_EnergyComments) */
+.conso-comment-block {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.conso-comment-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 64px;
+}
+
+.conso-comment-save {
+  align-self: flex-end;
+  font-size: 13px;
+}

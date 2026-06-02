@@ -70,6 +70,16 @@
         <div class="label">Planning SST</div>
         <div class="desc">Sous-traitants</div>
     </div>
+      <div class="menu-card" onclick="goTo('screen-meter-reading')">
+        <div class="icon">⚡</div>
+        <div class="label">Ronde compteurs</div>
+        <div class="desc">Relevés énergie</div>
+      </div>
+      <div class="menu-card" onclick="goTo('screen-meter-consumption')">
+        <div class="icon">📊</div>
+        <div class="label">Consommations</div>
+        <div class="desc">Analyse & exports</div>
+      </div>
       <!-- Widget Planning -->
     </div>
     <div id="today-widget" style="margin:16px 0;background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,0.08);">
@@ -495,12 +505,203 @@
         <button class="btn btn-secondary" style="font-size:11px;padding:8px 12px;" onclick="exportClients()">📤 Exporter liste</button>
         <input type="file" id="importFile" accept=".csv,.xls,.xlsx" style="display:none" onchange="importClients(event)">
       </div>
-        <div class="admin-section">
-  <h3>🔐 Historique des connexions</h3>
-  <button class="btn btn-primary" onclick="goTo('screen-login-history')">
-    Voir l'historique
-  </button>
+    </div>
+    <div class="admin-section">
+      <h3>⚡ Compteurs énergie</h3>
+      <p style="font-size:12px;color:#777;margin-bottom:8px;">Arborescence des compteurs et import Excel des relevés.</p>
+      <button class="btn btn-primary" onclick="goTo('screen-admin-meters')">Gérer les compteurs</button>
+    </div>
+    <div class="admin-section">
+      <h3>🔐 Historique des connexions</h3>
+      <button class="btn btn-primary" onclick="goTo('screen-login-history')">
+        Voir l'historique
+      </button>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn btn-secondary" onclick="goTo('screen-menu')">⬅ Retour</button>
+  </div>
 </div>
+
+<!-- ==================== ÉCRAN ADMIN COMPTEURS ÉNERGIE ==================== -->
+<div class="screen" id="screen-admin-meters">
+  <div class="header">
+    <button class="header-btn-left" onclick="goTo('screen-admin')">←</button>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo" alt="Logo">
+      <h1>Compteurs énergie</h1>
+    </div>
+    <div style="width:40px;"></div>
+  </div>
+
+  <div class="content">
+    <div class="meter-toolbar">
+      <label style="font-size:13px;color:#555;">Site / client</label>
+      <select id="meterClientFilter" aria-label="Filtrer par client"></select>
+    </div>
+
+    <div class="meter-panel" id="meterOptionsPanel">
+      <h3 id="meterFormTitle">Nouveau compteur</h3>
+      <p class="meter-import-hint" style="margin-top:0;">✏️ nom / type / unité / case « Général » · ⚙️ sous-compteurs liés, suppression</p>
+      <form id="meterForm">
+        <div class="meter-form-grid">
+          <label>
+            Nom affiché
+            <input type="text" id="meterName" required placeholder="Ex. Compteur gaz général">
+          </label>
+          <label>
+            Type d'énergie
+            <select id="meterEnergyType"></select>
+          </label>
+          <label>
+            Unité
+            <select id="meterUnit"></select>
+          </label>
+        </div>
+        <div class="meter-form-checks">
+          <label><input type="checkbox" id="meterIsGeneral"> Compteur général / totalisateur</label>
+          <label><input type="checkbox" id="meterIsDecreasing"> Index dégressif (cuve)</label>
+        </div>
+        <div id="meterGeneralFields" style="display:none;">
+          <label class="meter-form-checks" style="margin-bottom:8px;">
+            <input type="checkbox" id="meterIsCalculated" checked>
+            Compteur calculé (conso = somme des sous-compteurs liés, pas d'index obligatoire)
+          </label>
+          <label style="font-size:12px;color:#555;display:block;margin-bottom:6px;">Sous-compteurs liés (enregistrés dans LinkedMeters sur ce général)</label>
+          <div id="meterLinkedList" class="meter-linked-list"></div>
+        </div>
+        <div class="meter-form-actions">
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+          <button type="button" class="btn btn-secondary" onclick="resetMeterForm()">Annuler</button>
+          <button type="button" class="btn btn-secondary" id="btnDeleteMeter" style="display:none;" onclick="deleteMeterForm()">🗑️ Supprimer</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="meter-panel">
+      <h3>Arborescence</h3>
+      <p class="meter-import-hint" style="margin-top:0;">Les compteurs <strong>Général</strong> (icône compteur, bouton +) regroupent leurs sous-compteurs liés via ⚙️.</p>
+      <div id="meterTreeList"></div>
+    </div>
+
+    <div class="meter-panel">
+      <h3>Import Excel matriciel</h3>
+      <p class="meter-import-hint">
+        Format attendu : A1 « Nom compteur », A2 « Date du relevé » avec les mois en B2, C2…
+        Lignes repère (Électricité, Eau, Gaz…) définissent le contexte et sont ignorées comme compteurs.
+        Typologie auto-déduite (électricité → kWh, gaz → m³, eau → m³…).
+      </p>
+      <button type="button" class="btn btn-secondary" onclick="triggerImportFile()">📥 Importer relevés</button>
+      <input type="file" id="meterImportFile" accept=".xls,.xlsx" style="display:none" onchange="onImportFileChange(event)">
+      <div id="meterImportProgress" class="meter-import-progress"></div>
+    </div>
+
+    <div class="meter-panel">
+      <h3>Derniers relevés (aperçu)</h3>
+      <table class="meter-readings-table">
+        <thead>
+          <tr>
+            <th>Compteur</th>
+            <th>Période</th>
+            <th>Index</th>
+            <th>Auteur</th>
+          </tr>
+        </thead>
+        <tbody id="meterReadingsPreview"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn btn-secondary" onclick="goTo('screen-admin')">⬅ Retour admin</button>
+  </div>
+</div>
+
+<!-- ==================== ÉCRAN RONDE COMPTEURS ==================== -->
+<div class="screen" id="screen-meter-reading">
+  <div class="header">
+    <button class="header-btn-left" onclick="goTo('screen-menu')">←</button>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo" alt="Logo" onclick="goTo('screen-menu')" style="cursor:pointer;">
+      <h1>Ronde compteurs</h1>
+    </div>
+    <div style="width:40px;"></div>
+  </div>
+
+  <div class="content">
+    <div class="reading-toolbar">
+      <label class="reading-field">
+        <span>Site / client</span>
+        <select id="readingClientFilter" aria-label="Site client"></select>
+      </label>
+      <label class="reading-field">
+        <span>Mois du relevé</span>
+        <input type="month" id="readingPeriodMonth" aria-label="Mois du relevé">
+      </label>
+    </div>
+    <p id="readingSummary" class="reading-summary"></p>
+    <div id="readingMeterList" class="reading-list"></div>
+  </div>
+
+  <div class="bottom-bar reading-bottom-bar">
+    <button class="btn btn-secondary" onclick="goTo('screen-menu')">⬅ Retour</button>
+    <button class="btn btn-primary" type="button" onclick="saveAllReadings()">💾 Enregistrer</button>
+  </div>
+</div>
+
+<!-- ==================== ÉCRAN CONSOMMATIONS ÉNERGIE ==================== -->
+<div class="screen" id="screen-meter-consumption">
+  <div class="header">
+    <button class="header-btn-left" onclick="goTo('screen-menu')">←</button>
+    <div class="header-center">
+      <img src="logo.png" class="header-logo" alt="Logo" onclick="goTo('screen-menu')" style="cursor:pointer;">
+      <h1>Consommations</h1>
+    </div>
+    <div style="width:40px;"></div>
+  </div>
+
+  <div class="content">
+    <div class="reading-toolbar">
+      <label class="reading-field">
+        <span>Site / client</span>
+        <select id="consoClientFilter" aria-label="Site client"></select>
+      </label>
+      <label class="reading-field">
+        <span>Mois de référence</span>
+        <input type="month" id="consoPeriodMonth" aria-label="Mois de référence">
+      </label>
+    </div>
+    <p id="consoSummary" class="reading-summary"></p>
+
+    <div class="meter-panel">
+      <h3>Évolution annuelle par pôle</h3>
+      <p class="meter-import-hint">Axe janvier → décembre de l'année N · un graphique par compteur « Général » (Général TV, Général TJ, etc.) · trait plein = N · pointillé = N-1 · données : GS_GeneralConsumptions puis calcul live</p>
+      <div id="consoChartsGrid" class="conso-charts-grid"></div>
+    </div>
+
+    <div class="meter-panel">
+      <h3>Détail du mois (compteurs généraux)</h3>
+      <table class="meter-readings-table conso-detail-table">
+        <thead>
+          <tr>
+            <th>Compteur</th>
+            <th>Pôle</th>
+            <th>Consommation</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="consoMeterTable"></tbody>
+      </table>
+    </div>
+
+    <div class="meter-panel">
+      <h3>Exports Excel</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <button type="button" class="btn btn-secondary" onclick="exportConsoIndexes()">📥 Exporter les index (brut)</button>
+        <button type="button" class="btn btn-secondary" onclick="exportConsoCalculated()">📥 Exporter les consommations</button>
+      </div>
+      <p class="meter-import-hint">12 mois glissants jusqu'au mois de référence · format matriciel (compatible import).</p>
     </div>
   </div>
 

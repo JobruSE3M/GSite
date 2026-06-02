@@ -1,0 +1,100 @@
+================================================================================
+SHAREPOINT — Module Énergie & Ronde Compteurs
+Site : se3m.sharepoint.com/sites/GestionDeSite
+À créer MANUELLEMENT par le développeur (aucun script de provisionnement)
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+LISTE 1 : GS_Meters  (Arborescence des compteurs)
+────────────────────────────────────────────────────────────────────────────────
+
+Colonne (nom interne SP) | Type SharePoint              | Obligatoire | Format / valeurs
+-------------------------|------------------------------|-------------|------------------
+Title                    | Une seule ligne de texte     | Oui         | ID unique du compteur (ex: meter_site01_gaz_general)
+ClientId                 | Une seule ligne de texte     | Oui         | Nom du site/client (aligné sur GS_Clients.Title)
+Name                     | Une seule ligne de texte     | Oui         | Libellé affiché (ex: "Compteur gaz général")
+EnergyType               | Choix                        | Oui         | ELECTRICITE | GAZ | CHALEUR/FROID | EAU FROIDE | EAU INCENDIE | ECS | FIOUL/GNR
+Unit                     | Choix                        | Oui         | kWh | m³ | MWh | Litres | kVArh
+IsGeneral                | Oui/Non                      | Oui         | true = compteur totalisateur / général
+LinkedMeters             | Texte multiligne             | Non         | JSON tableau d'IDs Title (sous-compteurs du général)
+                         |                              |             | Ex: ["meter_hpe","meter_hce","meter_hph","meter_hch"]
+IsDecreasing             | Oui/Non                      | Oui         | true = compteur dégressif (cuve fioul)
+IsCalculated             | Oui/Non                      | Non         | Oui = conso générale = Σ sous-compteurs (GS_GeneralConsumptions). Non = index propre sur GS_Readings.
+
+Notes :
+- Title sert de clé primaire métier (comme GS_Entries).
+- ClientId doit correspondre à un client existant dans GS_Clients.
+- LinkedMeters : liens général ↔ sous-compteurs (JSON, cases cochées en admin). Pas de colonne ParentId dans l'application.
+- IsCalculated : l'application lit/écrit cette colonne. Défaut à l'enregistrement : Oui si Général (sauf case décochée en admin).
+
+────────────────────────────────────────────────────────────────────────────────
+LISTE 2 : GS_Readings  (Relevés d'index)
+────────────────────────────────────────────────────────────────────────────────
+
+Colonne (nom interne SP) | Type SharePoint              | Obligatoire | Format / valeurs
+-------------------------|------------------------------|-------------|------------------
+Title                    | Une seule ligne de texte     | Oui         | ID unique du relevé (ex: reading_1730123456 ou UUID)
+MeterId                  | Une seule ligne de texte     | Oui         | Title du compteur (GS_Meters.Title)
+Period                   | Date                         | Oui         | TOUJOURS le 1er du mois — ISO YYYY-MM-01 (ex: 2026-10-01)
+IndexValue               | Nombre (décimales autorisées)| Oui         | Valeur index relevé (ex: 125430.5)
+UserId                   | Une seule ligne de texte     | Oui         | Email auteur (ex: user@se3m.fr)
+
+Notes :
+- Un seul relevé par couple (MeterId + Period) — contrainte métier à respecter côté app.
+- Compteur général « calculé » (IsCalculated ou sous-compteurs liés) : l'application n'enregistre PAS de relevé
+  GS_Readings pour ce général ; la conso affichée = somme des relevés des sous-compteurs uniquement.
+- Period : jamais de jour arbitraire ; normaliser en JS : new Date(y, m, 1) → "YYYY-MM-01".
+- IndexValue : Number SP, pas de texte.
+
+────────────────────────────────────────────────────────────────────────────────
+MAPPING API Graph (à ajouter dans graph.js après création manuelle)
+────────────────────────────────────────────────────────────────────────────────
+
+lists.meters                → 'GS_Meters'
+lists.readings              → 'GS_Readings'
+lists.energyComments        → 'GS_EnergyComments'
+lists.generalConsumptions   → 'GS_GeneralConsumptions'
+
+────────────────────────────────────────────────────────────────────────────────
+LISTE 3 : GS_EnergyComments  (Commentaires graphiques — 1 ligne / site / année, stock JSON)
+────────────────────────────────────────────────────────────────────────────────
+
+Colonne (nom interne SP) | Type SharePoint              | Obligatoire | Format / valeurs
+-------------------------|------------------------------|-------------|------------------
+Title                    | Une seule ligne de texte     | Oui         | Clé : ecj_{ClientId}_{Year} (ex: ecj_ERIA_2026)
+ClientId                 | Une seule ligne de texte     | Oui         | Nom du site (GS_Clients.Title)
+Year                     | Nombre                       | Oui         | Année N des graphiques (ex: 2026)
+CommentsJSON             | Texte multiligne             | Oui         | JSON : { "Title_compteur_SP": "texte commentaire", ... }
+
+Exemple CommentsJSON (lisible admin dans SharePoint) :
+{
+  "meter_eria_tv_general": "Pic mars — vérifier sous-compteurs",
+  "meter_eria_tj_general": "RAS"
+}
+
+Notes :
+- PAS de colonnes EnergyType, Comment, MeterId (évite erreurs Graph).
+- Clé JSON = Title du compteur dans GS_Meters (pas le nom affiché).
+- L'app fusionne un commentaire à la fois sans créer une ligne par graphique.
+
+────────────────────────────────────────────────────────────────────────────────
+LISTE 4 : GS_GeneralConsumptions  (Consommations mensuelles des compteurs généraux)
+────────────────────────────────────────────────────────────────────────────────
+
+Colonne (nom interne SP) | Type SharePoint              | Obligatoire | Format / valeurs
+-------------------------|------------------------------|-------------|------------------
+Title                    | Une seule ligne de texte     | Oui         | Clé stable (ex: gc_meter_site_eau_gen_20250601)
+MeterId                  | Une seule ligne de texte     | Oui         | Title du compteur général (GS_Meters.Title)
+ClientId                 | Une seule ligne de texte     | Oui         | Nom du site/client (GS_Clients.Title)
+Period                   | Date                         | Oui         | 1er du mois — YYYY-MM-01
+ConsumptionValue         | Nombre (décimales autorisées)| Oui         | Conso du mois (pas un index)
+
+Colonnes optionnelles (si ajoutées plus tard) :
+Unit, Source (CALCUL | MANUEL | IMPORT), UserId, Notes
+
+Notes :
+- Un enregistrement par couple (MeterId + Period).
+- Les généraux « calculés » n'utilisent pas GS_Readings pour leur conso : elle est stockée ici.
+- L'application génère Title via generalConsumptionKey(meterId, period).
+
+================================================================================

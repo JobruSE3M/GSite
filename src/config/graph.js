@@ -12,6 +12,10 @@ export const GRAPH_CONFIG = {
     access: 'GS_Access',
     planningSst: 'GS_PlanningSst',
     loginHistory: 'GS_LoginHistory',
+    meters: 'GS_Meters',
+    readings: 'GS_Readings',
+    energyComments: 'GS_EnergyComments',
+    generalConsumptions: 'GS_GeneralConsumptions',
   },
 };
 

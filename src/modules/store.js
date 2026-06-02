@@ -11,6 +11,10 @@ const state = {
   planningData: {},
   planningSSTData: {},
   allLoginHistory: [],
+  meters: [],
+  readings: [],
+  energyComments: [],
+  generalConsumptions: [],
   currentUser: null,
   currentType: '',
   accessEditUser: '',
@@ -92,6 +96,38 @@ export const store = {
   set allLoginHistory(value) {
     assertArray('allLoginHistory', value);
     state.allLoginHistory = value;
+  },
+
+  get meters() {
+    return state.meters;
+  },
+  set meters(value) {
+    assertArray('meters', value);
+    state.meters = value;
+  },
+
+  get readings() {
+    return state.readings;
+  },
+  set readings(value) {
+    assertArray('readings', value);
+    state.readings = value;
+  },
+
+  get energyComments() {
+    return state.energyComments;
+  },
+  set energyComments(value) {
+    assertArray('energyComments', value);
+    state.energyComments = value;
+  },
+
+  get generalConsumptions() {
+    return state.generalConsumptions;
+  },
+  set generalConsumptions(value) {
+    assertArray('generalConsumptions', value);
+    state.generalConsumptions = value;
   },
 
   get currentUser() {
@@ -178,12 +214,14 @@ export const store = {
     state.sstYear = value;
   },
 
-  setLoadedData({ users, clients, entries, planning, access, planningSst }) {
+  setLoadedData({ users, clients, entries, planning, access, planningSst, meters, readings }) {
     if (users !== undefined) this.users = users;
     if (clients !== undefined) this.clients = clients;
     if (entries !== undefined) this.entries = entries;
     if (planning !== undefined) this.planningData = planning;
     if (access !== undefined) this.accessMap = access;
     if (planningSst !== undefined) this.planningSSTData = planningSst;
+    if (meters !== undefined) this.meters = meters;
+    if (readings !== undefined) this.readings = readings;
   },
 };
