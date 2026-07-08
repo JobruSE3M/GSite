@@ -1,7 +1,3 @@
-export default defineConfig({
-  base: '/GSite/',
-  // ... le reste de votre config
-});
 import { defineConfig } from 'vite';
 
 const NGROK_HOST = 'roulette-semicolon-battery.ngrok-free.dev';
@@ -14,6 +10,11 @@ function resolveBase(command) {
   if (process.env.VITE_BASE_PATH) {
     const base = process.env.VITE_BASE_PATH;
     return base.endsWith('/') ? base : base + '/';
+  }
+
+  // Build sur GitHub Actions : base = /NomDuRepo/ pour GitHub Pages
+  if (process.env.GITHUB_REPOSITORY) {
+    return '/' + process.env.GITHUB_REPOSITORY.split('/')[1] + '/';
   }
 
   // Comportement par défaut pour Azure SWA (et la majorité des hébergeurs)
