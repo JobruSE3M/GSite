@@ -1,3 +1,7 @@
+export default defineConfig({
+  base: '/GSite/',
+  // ... le reste de votre config
+});
 import { defineConfig } from 'vite';
 
 const NGROK_HOST = 'roulette-semicolon-battery.ngrok-free.dev';
